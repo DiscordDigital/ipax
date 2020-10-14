@@ -1,4 +1,4 @@
-FROM alpine:stable
+FROM alpine:latest
 
 COPY appdata /appdata
 

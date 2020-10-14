@@ -2,7 +2,6 @@
 
 A docker image to extract common metadata from IPA files and also to extract and normalize app icons.
 
----
 
 This docker image can be used to extract following items from IPA files:
 

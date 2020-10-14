@@ -45,5 +45,6 @@ If everything worked out you'll see a result like this:
 ```
 {"AppName": "sampleApp", "AppVersion": "1.0.1", "AppBundleIdentifier": "digital.discord.sample", "IconName": "sample.png"}
 ```
+The app icon will be located in the folder you specified with the -v parameter. In this case /tmp/ipas/sample.png
 
 You can clone the repository and modify the scripts to your needs, the output is in a simple JSON format which can be parsed in various of scripting and programming languages.

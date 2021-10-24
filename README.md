@@ -32,6 +32,8 @@ Once it's built you can already use it.
 
 ## Running the image
 
+### Single file
+
 Create a folder and put an IPA file inside it.\
 In this example the folder is /tmp/ipas/\
 And the IPA file is located here: /tmp/ipas/sample.ipa
@@ -46,5 +48,18 @@ If everything worked out you'll see a result like this:
 {"AppName": "sampleApp", "AppVersion": "1.0.1", "AppBundleIdentifier": "digital.discord.sample", "IconName": "sample.png"}
 ```
 The app icon will be located in the folder you specified with the -v parameter. In this case /tmp/ipas/sample.png
+
+### Multiple files
+
+You can also use ipax to parse all \*.ipa files in the folder specified by -v.\
+Syntax:\
+```docker run --rm -e multiple="true" -v /tmp/ipas/:/home/work/files ipax:latest```
+
+### Save JSON content as file using outfile parameter
+
+Keep in mind following only accepts filenames, as the container is locked to the specified folder.\
+```docker run --rm -e multiple="true" -e outfile="result.json" -v /tmp/ipas/:/home/work/files ipax:latest```
+
+This will save a result.json file in /tmp/ipas, this also works for single file mode.
 
 You can clone the repository and modify the scripts to your needs, the output is in a simple JSON format which can be parsed in various of scripting and programming languages.

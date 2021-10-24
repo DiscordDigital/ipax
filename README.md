@@ -1,8 +1,17 @@
-# ipax - IPA Metadata Extractor
 
-A docker image to extract common metadata from IPA files and also to extract and normalize app icons.
+<div align="center">
 
 
+# ipax ✔️
+#### IPA Metadata Extractor
+
+A docker image to extract common metadata from IPA files and also to extract and normalize app icons. 
+if this tool helped you please dont forget to star me<font color=#FF0000 size=5>🌟**star**🌟</font> [Me](https://github.com/DiscordDigital).
+<br>
+  <br>
+# Info and Capabilities
+</div>
+<br>
 This docker image can be used to extract following items from IPA files:
 
 * App Name
@@ -18,17 +27,39 @@ You can find ipin.py in the appdata folder.
 
 I modified ipin.py so it doesn't convert already normalized images and prevents them from corrupting that way. I also removed the original code which selects the source image files for conversion and replaced it with a line that calls the important function with the first argument passed to the file.
 
-## Building the docker image
+## build on linux distributions:
 
-First you clone the repository:
+#### Ubuntu:
 
-```git clone https://github.com/DiscordDigital/ipax```
+```bash
+sudo apt-get install git curl -y &&
+git clone https://github.com/DiscordDigital/ipax.git; cd ipax && chmod +x INSTALL.sh &&
+./INSTALL.sh
+```
 
-Then you go into the ipax folder and run following:
+#### CentOS7:
 
-```docker build -t ipax:latest .```
+```bash
+yum install install git curl -y &&
+git clone https://github.com/DiscordDigital/ipax.git; cd ipax && chmod +x INSTALL.sh &&
+./INSTALL.sh
+```
 
-Once it's built you can already use it.
+
+## Build Manually  
+
+1. clone the ipax repository:
+
+```bash
+git clone https://github.com/DiscordDigital/ipax
+```
+2. Install docker unless you don't have.
+3. Then you go into the ipax folder and run following:
+
+```bash
+docker build -t ipax:latest .
+``` 
+*Once it's built you can already use it.*
 
 ## Running the image
 
@@ -44,7 +75,7 @@ Run following to extract the metadata and app icon:
 
 If everything worked out you'll see a result like this:
 
-```
+```console
 {"AppName": "sampleApp", "AppVersion": "1.0.1", "AppBundleIdentifier": "digital.discord.sample", "IconName": "sample.png"}
 ```
 The app icon will be located in the folder you specified with the -v parameter. In this case /tmp/ipas/sample.png
@@ -63,3 +94,11 @@ Keep in mind following only accepts filenames, as the container is locked to the
 This will save a result.json file in /tmp/ipas, this also works for single file mode.
 
 You can clone the repository and modify the scripts to your needs, the output is in a simple JSON format which can be parsed in various of scripting and programming languages.
+
+## License
+
+ipax is licensed under the terms of GNU GENERAL PUBLIC LICENSE license. See the [LICENSE](LICENSE) file.
+> The GNU General Public License is a free, copyleft license for
+software and other kinds of works.
+
+

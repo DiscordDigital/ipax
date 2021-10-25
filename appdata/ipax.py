@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 import json
+import hashlib
 from zipfile import ZipFile
 
 def grabAppleXMLValue(key, xml):
@@ -31,7 +32,11 @@ def grabAppleIconNames(xml):
     IconNames = list(dict.fromkeys(IconNames))
     return IconNames
 
-def extractAppIcon(IPAfile, IconNames):
+def extractAppIcon(IPAfile, IconNames, SaveAs):
+    try:
+        os.rmdir('/appdata/Icons')
+    except:
+        pass
     try:
         os.mkdir('/appdata/Icons')
     except:
@@ -53,14 +58,13 @@ def extractAppIcon(IPAfile, IconNames):
             if size > max_size:
                 max_size = size
                 max_file = os.path.join(folder, file)
-    os.rename(max_file,'/home/work/AppIcon.png')
+    shutil.move(max_file,'/home/work/files/' + SaveAs)
 
 def uncrushPng(png_path):
     os.system('python2 /appdata/ipin.py ' + png_path)
 
 def processIPA(ipaFullPath):
-    fileName = os.path.basename(ipaFullPath)
-    baseFileName = os.path.splitext(fileName)[0]
+    baseFileName = os.path.basename(ipaFullPath)
     MatchPattern = "Payload\/.+?..app/Info.plist"
     with ZipFile(ipaFullPath, 'r') as zipObj:
         listOfFileNames = zipObj.namelist()
@@ -86,17 +90,24 @@ def processIPA(ipaFullPath):
         appBundleIdentifier = grabAppleXMLValue('CFBundleIdentifier', xml)
 
         IconNames = grabAppleIconNames(xml)
-        extractAppIcon(ipaFullPath, IconNames)
-        uncrushPng('/home/work/AppIcon.png')
 
-        genericName = os.path.splitext(baseFileName)[0] + '.png'
-        shutil.move('/home/work/AppIcon.png','/home/work/files/' + genericName)
+        md5_hash = hashlib.md5()
+        a_file = open(ipaFullPath, "rb")
+        content = a_file.read()
+        md5_hash.update(content)
+        hash = md5_hash.hexdigest()
+
+        newImageFileName = hash + ".png"
+
+        extractAppIcon(ipaFullPath, IconNames, newImageFileName)
+        uncrushPng('/home/work/files/' + newImageFileName)
 
         result = dict()
         result["AppName"] = appName
         result["AppVersion"] = appVersion
         result["AppBundleIdentifier"] = appBundleIdentifier
-        result["IconName"] = genericName
+        result["IconName"] = newImageFileName
+        result["FileName"] = baseFileName
         return result
 
 ipaLocation = "/home/work/files/"

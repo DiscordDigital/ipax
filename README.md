@@ -47,7 +47,7 @@ If everything worked out you'll see a result like this:
 ```
 {"AppName": "sampleApp", "AppVersion": "1.0.1", "AppBundleIdentifier": "digital.discord.sample", "IconName": "sample.png"}
 ```
-The app icon will be located in the folder you specified with the -v parameter. In this case /tmp/ipas/sample.png
+The app icon will be located in the folder you specified with the -v parameter. In this case /tmp/ipas/<md5 of ipa file>.png
 
 ### Multiple files
 

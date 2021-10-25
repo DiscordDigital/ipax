@@ -16,7 +16,7 @@ This version of ipin.py is based on a modified version by urielka which you can 
 
 You can find ipin.py in the appdata folder.
 
-I modified ipin.py so it doesn't convert already normalized images and prevents them from corrupting that way. I also removed the original code which selects the source image files for conversion and replaced it with a line that calls the important function with the first argument passed to the file.
+I modified ipin.py so it doesn't convert already normalized images and prevents them from corrupting that way. I also removed the original code which selects the source image files for conversion and replaced it with a line that calls the updatePNG function with the first argument passed to the file.
 
 ## Building the docker image
 
@@ -47,7 +47,8 @@ If everything worked out you'll see a result like this:
 ```
 {"AppName": "sampleApp", "AppVersion": "1.0.1", "AppBundleIdentifier": "digital.discord.sample", "IconName": "sample.png"}
 ```
-The app icon will be located in the folder you specified with the -v parameter. In this case /tmp/ipas/\<md5 of ipa file\>.png
+The app icon will be located in the folder you specified with the -v parameter.\
+In this case /tmp/ipas/\<md5 of ipa file\>.png
 
 ### Multiple files
 

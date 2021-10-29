@@ -19,22 +19,34 @@ def grabAppleXMLValue(key, xml):
 def grabAppleIconNames(xml):
     lines = xml.splitlines()
     startRead = False
+    multiMode = True
+    readOnce = False
     IconNames = []
     for line in lines:
         if startRead:
             result = line.replace('  ','').replace('\t','').replace('<string>','').replace('</string>','')
             if (not result == "<array>") and (not result == "</array>"):
                 IconNames.append(result)
-        if "<key>CFBundleIconFiles</key>" in line:
-            startRead = True
-        if "</array>" in line:
+        if readOnce:
             startRead = False
+        if ("<key>CFBundleIconFile</key>" in line):
+            startRead = True
+            multiMode = False
+        if ("<key>CFBundleIconFiles</key>" in line):
+            startRead = True
+            multiMode = True
+        if multiMode:
+            if "</array>" in line:
+                startRead = False
+        else:
+            readOnce = True
     IconNames = list(dict.fromkeys(IconNames))
     return IconNames
 
+
 def extractAppIcon(IPAfile, IconNames, SaveAs):
     try:
-        os.rmdir('/appdata/Icons')
+        shutil.rmtree('/appdata/Icons')
     except:
         pass
     try:
@@ -91,16 +103,21 @@ def processIPA(ipaFullPath):
 
         IconNames = grabAppleIconNames(xml)
 
-        md5_hash = hashlib.md5()
-        a_file = open(ipaFullPath, "rb")
-        content = a_file.read()
-        md5_hash.update(content)
-        hash = md5_hash.hexdigest()
+        if (len(IconNames) > 0):
 
-        newImageFileName = hash + ".png"
+            md5_hash = hashlib.md5()
+            a_file = open(ipaFullPath, "rb")
+            content = a_file.read()
+            md5_hash.update(content)
+            hash = md5_hash.hexdigest()
 
-        extractAppIcon(ipaFullPath, IconNames, newImageFileName)
-        uncrushPng('/home/work/files/' + newImageFileName)
+            newImageFileName = hash + ".png"
+
+            extractAppIcon(ipaFullPath, IconNames, newImageFileName)
+            uncrushPng('/home/work/files/' + newImageFileName)
+        else:
+            print("Warning: " + baseFileName + " has no icon or the parser failed.")
+            newImageFileName = False
 
         result = dict()
         result["AppName"] = appName

@@ -61,6 +61,22 @@ Syntax:\
 Keep in mind following only accepts filenames, as the container is locked to the specified folder.\
 ```docker run --rm -e multiple="true" -e outfile="result.json" -v /tmp/ipas/:/home/work/files ipax:latest```
 
-This will save a result.json file in /tmp/ipas, this also works for single file mode.
+This will save a result.json file in /tmp/ipas, this also works for single file mode.\
+
+### Make output pretty
+
+You can make the output more readable using the -e pretty="true" option.\
+```docker run --rm -e multiple="true" -e pretty="true" -v /tmp/ipas/:/home/work/files ipax:latest```
+
+### Enable default keys for output
+
+In case you need the JSON output so you can search by key, you can either specify "bundleId" or "filename".\
+You can combine this with the pretty argument and also the sort by key option.\
+```docker run --rm -e multiple="true" -e defaultkey="bundleId" -v /tmp/ipas/:/home/work/files ipax:latest```
+
+### Sort by keys
+
+In case you need the JSON output sorted alphabetically you can do so by enabling default keys and using the sortkey option:\
+```docker run --rm -e multiple="true" -e defaultkey="bundleId" -e sortkey="true" -v /tmp/ipas/:/home/work/files ipax:latest```
 
 You can clone the repository and modify the scripts to your needs, the output is in a simple JSON format which can be parsed in various of scripting and programming languages.

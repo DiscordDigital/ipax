@@ -6,6 +6,11 @@ import json
 import hashlib
 from zipfile import ZipFile
 
+def mergeDicts(x, y):
+    newDict = x.copy()
+    newDict.update(y)
+    return newDict
+
 def grabAppleXMLValue(key, xml):
     lines = xml.splitlines()
     thisLine = False
@@ -75,7 +80,7 @@ def extractAppIcon(IPAfile, IconNames, SaveAs):
 def uncrushPng(png_path):
     os.system('python2 /appdata/ipin.py ' + png_path)
 
-def processIPA(ipaFullPath):
+def processIPA(ipaFullPath, defaultkey):
     baseFileName = os.path.basename(ipaFullPath)
     MatchPattern = "Payload\/.+?..app/Info.plist"
     with ZipFile(ipaFullPath, 'r') as zipObj:
@@ -120,11 +125,24 @@ def processIPA(ipaFullPath):
             newImageFileName = False
 
         result = dict()
-        result["AppName"] = appName
-        result["AppVersion"] = appVersion
-        result["AppBundleIdentifier"] = appBundleIdentifier
-        result["IconName"] = newImageFileName
-        result["FileName"] = baseFileName
+        if (defaultkey == "filename"):
+            result[baseFileName] = dict()
+            result[baseFileName]["AppName"] = appName
+            result[baseFileName]["AppVersion"] = appVersion
+            result[baseFileName]["AppBundleIdentifier"] = appBundleIdentifier
+            result[baseFileName]["IconName"] = newImageFileName
+        elif (defaultkey == "bundleId"):
+            result[appBundleIdentifier] = dict()
+            result[appBundleIdentifier]["AppName"] = appName
+            result[appBundleIdentifier]["AppVersion"] = appVersion
+            result[appBundleIdentifier]["IconName"] = newImageFileName
+            result[appBundleIdentifier]["FileName"] = baseFileName
+        else:
+            result["AppName"] = appName
+            result["AppVersion"] = appVersion
+            result["AppBundleIdentifier"] = appBundleIdentifier
+            result["IconName"] = newImageFileName
+            result["FileName"] = baseFileName
         return result
 
 ipaLocation = "/home/work/files/"
@@ -138,19 +156,36 @@ multiple = sys.argv[3]
 
 ipaFullPath = ipaLocation + ipaFilename
 
+pretty = sys.argv[4]
+sortkey = sys.argv[5]
+defaultkey = sys.argv[6]
+
 if multiple == "true":
         allFiles = os.listdir(ipaLocation)
-        json_contents = []
+        if (defaultkey == "none"):
+            json_contents = []
+        else:
+            json_contents = {}
         for f in allFiles:
             if f.lower().endswith(".ipa"):
                 ipaFullPath = ipaLocation + f
-                returnData = processIPA(ipaFullPath)
+                returnData = processIPA(ipaFullPath, defaultkey)
                 if (returnData == "NotAnIPAFile"):
                     print("Warning: file " + f + " is not an ipa file.")
                     continue
-                json_contents.append(returnData)
+                if (defaultkey != "none"):
+                    json_contents = mergeDicts(json_contents, returnData)
+                else:
+                    json_contents.append(returnData)
         if outfile == "none":
-            print(json.dumps(json_contents))
+            if (sortkey == "true") and (pretty == "true"):
+                print(json.dumps(json_contents, indent=4, sort_keys=True))
+            elif (sortkey == "true"):
+                print(json.dumps(json_contents, sort_keys=True))
+            elif (pretty == "true"):
+                print(json.dumps(json_contents, indent=4))
+            else:
+                print(json.dumps(json_contents))
         else:
             try:
                 try:
@@ -158,7 +193,15 @@ if multiple == "true":
                 except:
                     pass
                 outF = open(outfile, "a")
-                outF.write(json.dumps(json_contents))
+                if (sortkey == "true") and (pretty == "true"):
+                    outF.write(json.dumps(json_contents, indent=4, sort_keys=True))
+                else:
+                    if (sortkey == "true"):
+                        outF.write(json.dumps(json_contents, sort_keys=True))
+                    elif (pretty == "true"):
+                        outF.write(json.dumps(json_contents, indent=4))
+                    else:
+                        outF.write(json.dumps(json_contents))
             except OSError as err:
                 print("Couldn't save to outfile: {0}".format(err))
                 pass
@@ -171,7 +214,10 @@ else:
         print("Alternatively you can process all ipa files like this:")
         print('-e multiple="true" --rm -v /tmp/ipas/:/home/work/files\n\n')
         print("You can output the JSON contents to a text file by using:\n")
-        print('-e outfile="result.json"')
+        print('-e outfile="result.json"\n\n')
+        print('You can make the output pretty by using -e pretty="true"\n')
+        print('To set the default key you can either specify -e defaultkey="filename" or -e defaultkey="bundleId".\n')
+        print('To make the keynames sorted you can specify -e sortkey="true".')
         exit()
     else:
         if not os.path.isfile(ipaFullPath):
@@ -179,7 +225,10 @@ else:
             exit()
 
         if outfile == "none":
-            print(json.dumps(processIPA(ipaFullPath)))
+            if (pretty == "true"):
+                print(json.dumps(processIPA(ipaFullPath, defaultkey), indent=4))
+            else:
+                print(json.dumps(processIPA(ipaFullPath, defaultkey)))
         else:
             try:
                 try:
@@ -187,7 +236,12 @@ else:
                 except:
                     pass
                 outF = open(outfile, "a")
-                outF.write(json.dumps(processIPA(ipaFullPath)))
+                if (pretty == "true"):
+                    outF.write(json.dumps(processIPA(ipaFullPath, defaultkey), indent=4, sort_keys=True))
+                elif (pretty == "true"):
+                    outF.write(json.dumps(processIPA(ipaFullPath, defaultkey), indent=4))
+                else:
+                    outF.write(json.dumps(processIPA(ipaFullPath, defaultkey)))
             except OSError as err:
                 print("Couldn't save to outfile: {0}".format(err))
                 pass

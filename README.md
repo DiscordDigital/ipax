@@ -50,6 +50,8 @@ If everything worked out you'll see a result like this:
 The app icon will be located in the folder you specified with the -v parameter.\
 In this case /tmp/ipas/\<md5 of ipa file\>.png
 
+The timestamp is a unix timestamp, the filesize is in bytes.
+
 ### Multiple files
 
 You can also use ipax to parse all \*.ipa files in the folder specified by -v.\

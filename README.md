@@ -45,7 +45,7 @@ Run following to extract the metadata and app icon:
 If everything worked out you'll see a result like this:
 
 ```
-{"AppName": "sampleApp", "AppVersion": "1.0.1", "AppBundleIdentifier": "digital.discord.sample", "IconName": "sample.png"}
+{"AppName": "sampleApp", "AppVersion": "1.0.1", "AppBundleIdentifier": "digital.discord.sample", "IconName": "sample.png", "FileName": "mySampleApp.ipa", "Timestamp": 1637676732}
 ```
 The app icon will be located in the folder you specified with the -v parameter.\
 In this case /tmp/ipas/\<md5 of ipa file\>.png
@@ -54,29 +54,40 @@ In this case /tmp/ipas/\<md5 of ipa file\>.png
 
 You can also use ipax to parse all \*.ipa files in the folder specified by -v.\
 Syntax:\
-```docker run --rm -e multiple="true" -v /tmp/ipas/:/home/work/files ipax:latest```
+```docker run --rm -e multiple=True -v /tmp/ipas/:/home/work/files ipax:latest```
 
 ### Save JSON content as file using outfile parameter
 
 Keep in mind following only accepts filenames, as the container is locked to the specified folder.\
-```docker run --rm -e multiple="true" -e outfile="result.json" -v /tmp/ipas/:/home/work/files ipax:latest```
+```docker run --rm -e multiple=True -e outfile="result.json" -v /tmp/ipas/:/home/work/files ipax:latest```
 
 This will save a result.json file in /tmp/ipas, this also works for single file mode.\
 
 ### Make output pretty
 
 You can make the output more readable using the -e pretty="true" option.\
-```docker run --rm -e multiple="true" -e pretty="true" -v /tmp/ipas/:/home/work/files ipax:latest```
+```docker run --rm -e multiple=True -e pretty=True -v /tmp/ipas/:/home/work/files ipax:latest```
 
 ### Enable default keys for output
 
 In case you need the JSON output so you can search by key, you can either specify "bundleId" or "filename".\
-You can combine this with the pretty argument and also the sort by key option.\
-```docker run --rm -e multiple="true" -e defaultkey="bundleId" -v /tmp/ipas/:/home/work/files ipax:latest```
+You can combine this with the pretty argument and also the sort by key option:\
+```docker run --rm -e multiple=True -e defaultkey="bundleId" -v /tmp/ipas/:/home/work/files ipax:latest```
 
 ### Sort by keys
 
 In case you need the JSON output sorted alphabetically you can do so by enabling default keys and using the sortkey option:\
-```docker run --rm -e multiple="true" -e defaultkey="bundleId" -e sortkey="true" -v /tmp/ipas/:/home/work/files ipax:latest```
+```docker run --rm -e multiple=True -e defaultkey="bundleId" -e sortkey=True -v /tmp/ipas/:/home/work/files ipax:latest```
+
+### Save to sub-directories within workdir
+
+You can make ipax auto-generate subdirs and put appicons and the outfile in own directories:\
+```docker run --rm -e multiple=True -e appicondir="icons" -e outfiledir="json" -e outfile="result.json" -v /tmp/ipas/:/home/work/files ipax:latest```
+
+### Disable generation of appicons
+
+Sometimes it's useful that ipax doesn't generate the appicons.\
+You can do so by specifying the appicons parameter:\
+```docker run --rm -e multiple=True -e appicons=False -v /tmp/ipas/:/home/work/files ipax:latest```
 
 You can clone the repository and modify the scripts to your needs, the output is in a simple JSON format which can be parsed in various of scripting and programming languages.

@@ -1,36 +1,51 @@
-# ipax - IPA Metadata Extractor
+<div align="center">
+  
+# **iPAX** - _IPA Metadata Extractor_
+A **docker** image to extract common metadata from "iPA" files and also to extract and normalize app icons. If **iPAX** helped you, please don't forget to <font color=#FF0000 size=5>🌟</font> [Me](https://github.com/DiscordDigital).
+</div>
 
-A docker image to extract common metadata from IPA files and also to extract and normalize app icons.
-
-
-This docker image can be used to extract following items from IPA files:
-
-* App Name
-* App Version
-* App Bundle Identifier
-* App Icon
-
-The app icon is extracted and then normalized automatically using ipin.py which is licensed under GPLv3 and you can find the original source code here: <https://axelbrz.com/?mod=iphone-png-images-normalizer>
-
-This version of ipin.py is based on a modified version by urielka which you can find here: https://gist.github.com/urielka/3609051
-
-You can find ipin.py in the appdata folder.
-
-I modified ipin.py so it doesn't convert already normalized images and prevents them from corrupting that way. I also removed the original code which selects the source image files for conversion and replaced it with a line that calls the updatePNG function with the first argument passed to the file.
+## ipax Features:
+- [x] App Name
+- [x] App Version
+- [x] App Bundle Identifier
+- [x] App Icon
+- [x] App Size
+- [x] File Name
+- [x] Time Stamp
 
 ## Building the docker image
 
-First you clone the repository:
+#### clone the repository:
 
-```git clone https://github.com/DiscordDigital/ipax```
-
-Then you go into the ipax folder and run following:
-
-```docker build -t ipax:latest .```
-
+```console
+git clone https://github.com/DiscordDigital/ipax; cd ipax
+```
+#### Build iPAX using following command:
+```console
+docker build -t ipax:latest .
+```
 Once it's built you can already use it.
 
-## Running the image
+## Usage: 
+
+```bash
+Usage: docker run --rm -e [-options1] -e [-options2] -e [-options3] -v /tmp/ipas/:/home/work/files ipax:latest
+
+options:
+-e filename="sample.ipa"           Single iPA file.
+-e multiple=True                   Multiple iPA files.
+-e outfile="result.json"           Extract iPA file info into .JSON file.
+-e pretty="true"                   Generate debug output files. (.zsign_debug folder)
+-e defaultkey="bundleId"           JSON output search by key bundleId.
+-e defaultkey="filename"           JSON output search by key FileName.
+-e sortkey=True                    JSON output sorted alphabetically.
+-e outfiledir="Folder"             Auto-generate subdirs for JSON file. 
+-e appicondir="icons"              Auto-generate subdirs for App icons.
+-e appicons=False                  Avoid generating App icons.
+```
+
+
+## Usage Examples: 
 
 ### Single file
 
@@ -40,17 +55,18 @@ And the IPA file is located here: /tmp/ipas/sample.ipa
 
 Run following to extract the metadata and app icon:
 
-```docker run --rm -e filename="sample.ipa" -v /tmp/ipas/:/home/work/files ipax:latest```
+```bash
+docker run --rm -e filename="sample.ipa" -v /tmp/ipas/:/home/work/files ipax:latest
+```
 
 If everything worked out you'll see a result like this:
-
 ```
 {"AppName": "sampleApp", "AppVersion": "1.0.1", "AppBundleIdentifier": "digital.discord.sample", "IconName": "sample.png", "FileName": "mySampleApp.ipa", "Timestamp": 1637676732}
 ```
 The app icon will be located in the folder you specified with the -v parameter.\
 In this case /tmp/ipas/\<md5 of ipa file\>.png
 
-The timestamp is a unix timestamp, the filesize is in bytes.
+_The timestamp is a unix timestamp, the filesize is in bytes._
 
 ### Multiple files
 
@@ -92,4 +108,18 @@ Sometimes it's useful that ipax doesn't generate the appicons.\
 You can do so by specifying the appicons parameter:\
 ```docker run --rm -e multiple=True -e appicons=False -v /tmp/ipas/:/home/work/files ipax:latest```
 
-You can clone the repository and modify the scripts to your needs, the output is in a simple JSON format which can be parsed in various of scripting and programming languages.
+# Extra information about iPAX: 
+
+The app icon is extracted and then normalized automatically using **ipin.py** which is licensed under GPLv3 and you can find the original source code: [Click Here](https://axelbrz.com/?mod=iphone-png-images-normalizer).
+
+This version of **ipin.py** is based on a modified version by urielka which you can find here: [Click Here](https://gist.github.com/urielka/3609051)
+
+You can find **ipin.py** in the appdata folder.
+I modified ipin.py so it doesn't convert already normalized images and prevents them from corrupting that way. I also removed the original code which selects the source image files for conversion and replaced it with a line that calls the updatePNG function with the first argument passed to the file.
+
+
+## License
+
+This project is licensed under the terms of the GNU license. See the [LICENSE](LICENSE) file.
+
+> This project is open source under the GNU license, which means you have full access to the source code and can modify it to fit your own needs. All **iPAX** tools run on your own computer or server, so your credentials or other sensitive information will never leave your own computer. You are responsible for how you use **iPAX** tool.
